@@ -23,7 +23,7 @@ public class DemoSolve extends AppCompatActivity {
     // UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR
     // old - DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL
 
-    private static  String scrambledCube = "UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR";
+    private static  String scrambledCube = "DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL";
     private static  String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
     private static  String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
 
