@@ -1,5 +1,7 @@
 package com.sem6.mad.rubikscubesolver;
 
+import static com.sem6.mad.rubikscubesolver.SolveCube.findShorterSolutions;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,10 +20,12 @@ public class DemoSolve extends AppCompatActivity {
     Button btnSolve;
     TextView txtMoves;
     TextView txtMove1;
+    // UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR
+    // old - DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL
 
-    private static final String scrambledCube = "DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL";
-    private static final String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
-    private static final String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
+    private static  String scrambledCube = "UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR";
+    private static  String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
+    private static  String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +44,14 @@ public class DemoSolve extends AppCompatActivity {
         btnSolve = findViewById(R.id.button);
 
         String cubeState = Min2PhaseToCubeMapping.colorMapping(scrambledCube);
+       // cubeState = "012345012101234512212345012312345013412345014512345015";
+       // cubeState = "000000000333333555555555222111111111222222444444444333";
+        // cubeState = "000000000111111111222222222333333333444444444555555555";
         animCube.setCubeModel(cubeState);
         Log.d("CubeState",cubeState);
+
+        shortestSolve = findShorterSolutions(scrambledCube);
+
 
         btnSolve.setOnClickListener(new View.OnClickListener() {
             @Override

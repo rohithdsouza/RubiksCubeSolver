@@ -1,8 +1,11 @@
 package com.sem6.mad.rubikscubesolver;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -21,15 +24,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.catalinjurjiu.rubikdetector.RubikDetector;
 import com.catalinjurjiu.rubikdetector.RubikDetectorUtils;
 import com.catalinjurjiu.rubikdetector.config.DrawConfig;
 import com.catalinjurjiu.rubikdetector.model.RubikFacelet;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 
 public class LiveDetectionActivity extends Activity implements SurfaceHolder.Callback {
@@ -41,6 +51,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
     private static final String TAG = LiveDetectionActivity.class.getSimpleName();
     private SurfaceHolder surfaceHolder;
     private ProcessingThread processingThread;
+    public static Button btnCapture;
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -54,6 +65,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
         //TODO however, strictly in this case, this does not happen. so we're safe with initializing the camera & rendering here
         processingThread.openCamera();
         processingThread.startCamera();
+
     }
 
     @Override
@@ -66,12 +78,21 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_detection);
+        setTheme(R.style.Theme_ModernDashbord);
         setTitle(null);
         surfaceHolder = ((SurfaceView) findViewById(R.id.camera_surface_view)).getHolder();
         surfaceHolder.addCallback(this);
 
         processingThread = new ProcessingThread("RubikProcessingThread", surfaceHolder);
         processingThread.start();
+
+        btnCapture = findViewById(R.id.btn_capture);
+//        LiveDetectionActivity.btnCapture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d("brozz", "work clikc");
+//            }
+//        });
     }
 
     @Override
@@ -188,10 +209,19 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     private boolean drawing = true;
     private boolean drawingFromJava = false;
     private SurfaceTexture surfaceTexture;
+    public String faceletcol = "";
+
+
+    public  String[] cubeFaceColor = new String[7];;
+    int count = 0;
+
+
 
     ProcessingThread(String name, SurfaceHolder surfaceHolder) {
         super(name);
         this.surfaceHolder = surfaceHolder;
+        Arrays.fill(cubeFaceColor,"");
+
     }
 
     @Override
@@ -200,6 +230,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         if (data == null) {
             Log.w(TAG, "Received null data array, or a data array of wrong size, from camera. Do nothing.");
             return;
+
         }
 
         if (data.length != currentConfigPreviewFrameByteCount) {
@@ -343,16 +374,20 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
             return;
         }
         camera = Camera.open(cameraId);
+       // camera.setDisplayOrientation(90);
         Camera.Parameters cameraParameters = camera.getParameters();
         cameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         validPreviewFormatSizes = cameraParameters.getSupportedPreviewSizes();
         previewSize = findHighResValidPreviewSize(camera);
         cameraParameters.setPreviewSize(previewSize.width, previewSize.height);
+        Log.d("brok","" + previewSize.width + " h: "+ previewSize.height);
         cameraParameters.setPreviewFormat(LiveDetectionActivity.DEFAULT_IMAGE_FORMAT);
+
         camera.setParameters(cameraParameters);
 
         try {
             surfaceTexture = new SurfaceTexture(REDUNDANT_TEXTURE_ID);
+         //   camera.setDisplayOrientation(90);
             camera.setPreviewTexture(surfaceTexture);
         } catch (IOException e) {
             Log.w(TAG, "error creating the texture", e);
@@ -368,6 +403,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     }
 
     private void startCameraInternal() {
+       // camera.setDisplayOrientation(90);
         camera.startPreview();
     }
 
@@ -434,6 +470,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     }
 
     private void renderFrameInternal(byte[] data) {
+     //   camera.setDisplayOrientation(90);
         Log.w(TAG, "renderFrameInternal");
         Canvas canvas = surfaceHolder.lockCanvas();
         if (canvas == null) {
@@ -442,7 +479,87 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
 
         Rect srcRect = new Rect(0, 0, previewSize.width, previewSize.height);
 
+        ///////////////////////Adding button capture here//////////////////////////////
+
+//        LiveDetectionActivity.btnCapture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d("bro2", "click");
+//            }
+//        });
+
         RubikFacelet[][] facelets = rubikDetector.findCube(data);
+
+        RubikFacelet[][] finalFacelets1 = facelets;
+
+
+
+        LiveDetectionActivity.btnCapture.setOnClickListener(new View.OnClickListener() {
+            @Override
+
+            public void onClick(View view) {
+
+                Log.d("bro", "click" + count);
+
+                //accept facelet
+                if ( count <= 6 && finalFacelets1 != null)
+                {
+
+                    faceletcol =  getCubeColorString(finalFacelets1);
+
+                    new LovelyTextInputDialog(view.getContext(), R.style.EditTextTintTheme)
+                            .setTopColorRes(R.color.teal_200)
+                            .setTitle("Check Facelet Colors")
+                            .setMessage(faceletcol)
+                            .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                                @Override
+                                public void onTextInputConfirmed(String text) {
+
+//                                    Toast.makeText(view.getContext(), faceletcol, Toast.LENGTH_SHORT).show();
+//                                    cubeFaceColor[count] += faceletcol;
+//                                    count++;
+
+                                    if ( text.length() == 9)
+                                    {
+                                        faceletcol = text;
+                                        Toast.makeText(view.getContext(), faceletcol, Toast.LENGTH_SHORT).show();
+                                        cubeFaceColor[count] = faceletcol;
+                                        Log.d("bro1", cubeFaceColor[count] );
+                                        count++;
+
+                                    }
+
+                                    else{
+
+                                        Log.d("bro1",faceletcol);
+                                        cubeFaceColor[count] = faceletcol;
+                                        Log.d("bro1", "in " + cubeFaceColor[count]);
+                                        Toast.makeText(view.getContext(), faceletcol, Toast.LENGTH_SHORT).show();
+                                        count++;
+                                        Log.d("bro1","in here");
+                                    }
+
+
+                                }
+                            })
+                            .show();
+
+                    if( count > 5)
+                    {
+                        String cube = cubeFaceColor[0] + cubeFaceColor[1] + cubeFaceColor[2] +
+                                cubeFaceColor[3] + cubeFaceColor[4] + cubeFaceColor[5];
+                        Log.d("broskii", cube);
+                        Intent intent = new Intent(view.getContext(),
+                                SolveCube.class);
+                        intent.putExtra("cubeString",cube);
+
+                        view.getContext().startActivity(intent);
+                    }
+                }
+            }
+        });
+
+
 
         drawingBuffer.rewind();
         drawingBuffer.put(data, rubikDetector.getResultFrameBufferOffset(), rubikDetector.getResultFrameByteCount());
@@ -459,7 +576,15 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                         surfaceHolder.getSurfaceFrame().width(),
                         surfaceHolder.getSurfaceFrame().height());
                 Log.d(TAG, "drawing facelets!");
+
                 RubikDetectorUtils.drawFaceletsAsRectangles(facelets, canvas, paint);
+
+                ///////////getting cube facelets colors on click////////////
+
+                RubikFacelet[][] finalFacelets = facelets;
+
+
+
             } else {
                 Log.d(TAG, "facelets are null!");
             }
@@ -468,6 +593,38 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         } finally {
             surfaceHolder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    public static String getCubeColorString(@NonNull RubikFacelet[][] result) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+
+                switch (result[i][j].color) {
+                    case RubikFacelet.Color.WHITE:
+                        stringBuilder.append("W");
+                        break;
+                    case RubikFacelet.Color.YELLOW:
+                        stringBuilder.append("Y");
+                        break;
+                    case RubikFacelet.Color.RED:
+                        stringBuilder.append("R");
+                        break;
+                    case RubikFacelet.Color.BLUE:
+                        stringBuilder.append("B");
+                        break;
+                    case RubikFacelet.Color.GREEN:
+                        stringBuilder.append("G");
+                        break;
+                    case RubikFacelet.Color.ORANGE:
+                        stringBuilder.append("O");
+                        break;
+
+                }
+
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private void allocateAndSetBuffers() {

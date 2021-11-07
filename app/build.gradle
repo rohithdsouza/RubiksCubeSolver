@@ -43,7 +43,7 @@ dependencies {
     implementation 'com.eightbitlab:blurview:1.6.6'
     implementation 'com.catalinjurjiu:animcube-android:1.0.3'
     implementation 'com.catalinjurjiu:rubikdetector-android:1.0.0'
-
+    implementation 'com.yarolegovich:lovely-dialog:1.1.1'
 
 
     implementation project(path: ':sdk')

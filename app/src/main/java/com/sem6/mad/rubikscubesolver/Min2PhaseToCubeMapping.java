@@ -8,6 +8,7 @@ package com.sem6.mad.rubikscubesolver;
  *                          to
  *     132304100521115322323524120540531314405043012554354204
  *
+ *     test- 000000000333333555555555222111111111222222444444444333
  */
 public class Min2PhaseToCubeMapping {
     public static String colorMapping (String initialSequence)
@@ -23,17 +24,17 @@ public class Min2PhaseToCubeMapping {
         {
             switch (initialSequence.charAt(i))
             {
-                case 'U' : numberSequence.setCharAt(i, '0');
+                case 'U' : numberSequence.setCharAt(i, '0'); //white
                     break;
-                case 'D' : numberSequence.setCharAt(i, '1');
+                case 'B' : numberSequence.setCharAt(i, '1'); //yellow
                     break;
-                case 'F' : numberSequence.setCharAt(i, '2');
+                case 'D' : numberSequence.setCharAt(i, '5'); //green
                     break;
-                case 'B' : numberSequence.setCharAt(i, '3');
+                case 'L' : numberSequence.setCharAt(i, '4'); //blue
                     break;
-                case 'R' : numberSequence.setCharAt(i, '5');
+                case 'R' : numberSequence.setCharAt(i, '3'); //red
                     break;
-                case 'L' : numberSequence.setCharAt(i, '4');
+                case 'F' : numberSequence.setCharAt(i, '2'); //orange
                     break;
             }
         }
@@ -44,7 +45,7 @@ public class Min2PhaseToCubeMapping {
         return finalSequence1;
     }
 
-    //changing the <U R F D L B> to <U D F B L R>
+    //changing the <U R F D L B> to <U D F B L R> but to <U D L R B F>
 
     public static char[][] orientationMapping ( String numberSequence)
     {
@@ -74,6 +75,8 @@ public class Min2PhaseToCubeMapping {
     {
         char[][] newSeq = new char[6][9];
         String finalsequence = "";
+
+        // i/p - 012345012101234512212345012312345013412345014512345015
 
         // U
         newSeq[0][0] = numSeq[0][7-1];

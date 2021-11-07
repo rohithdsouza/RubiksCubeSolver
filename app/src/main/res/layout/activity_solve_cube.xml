@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/cardview_dark_background"
-    tools:context=".DemoSolve">
+    tools:context=".SolveCube">
 
     <ImageView
         android:id="@+id/root"
@@ -81,5 +81,6 @@
         app:layout_constraintVertical_bias="0.937" />
     <!--        app:cubeColors="@array/custom_cube_colors" />-->
     <!--optional if you want the back faces to be displayed-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
