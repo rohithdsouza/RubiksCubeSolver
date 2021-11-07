@@ -1,7 +1,11 @@
 package com.sem6.mad.rubikscubesolver;
 
+
+import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,6 +14,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -21,6 +26,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.catalinjurjiu.rubikdetector.RubikDetector;
 import com.catalinjurjiu.rubikdetector.RubikDetectorUtils;
@@ -41,6 +49,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
     public static final int DEFAULT_PREVIEW_WIDTH = 1920;
     public static final int DEFAULT_PREVIEW_HEIGHT = 1080;
     public static final int DEFAULT_IMAGE_FORMAT = ImageFormat.NV21;
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     private static final String TAG = LiveDetectionActivity.class.getSimpleName();
     private SurfaceHolder surfaceHolder;
@@ -80,10 +89,72 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
         surfaceHolder = ((SurfaceView) findViewById(R.id.camera_surface_view)).getHolder();
         surfaceHolder.addCallback(this);
 
+    if (checkPermission()) {
         processingThread = new ProcessingThread("RubikProcessingThread", surfaceHolder);
         processingThread.start();
-
     }
+
+        else {
+            requestPermission();
+        }
+    }
+
+
+    private boolean checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            return false;
+        }
+        return true;
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.CAMERA},
+                PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+
+                    // main logic
+                } else {
+                    Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            showMessageOKCancel("You need to allow access permissions",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                requestPermission();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(LiveDetectionActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+
 
     @Override
     protected void onDestroy() {
