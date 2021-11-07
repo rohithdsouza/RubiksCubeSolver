@@ -101,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_black"
-                        android:text="Scan"
+                        android:text="Scan Cube"
                         android:textColor="#257FC5"
                         android:textSize="22sp" />
                 </LinearLayout>
@@ -150,7 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_black"
-                        android:text="Solve"
+                        android:text="Demo Solve"
                         android:textColor="#D84DCA"
                         android:textSize="22sp" />
                 </LinearLayout>

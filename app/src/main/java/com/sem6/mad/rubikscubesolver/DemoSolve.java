@@ -23,8 +23,8 @@ public class DemoSolve extends AppCompatActivity {
     // UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR
     // old - DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL
 
-    private static  String scrambledCube = "DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL";
-    private static  String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
+    private static final String scrambledCube = "DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL";
+    private static final String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
     private static  String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
 
     @Override
@@ -44,33 +44,32 @@ public class DemoSolve extends AppCompatActivity {
         btnSolve = findViewById(R.id.button);
 
         String cubeState = Min2PhaseToCubeMapping.colorMapping(scrambledCube);
+
        // cubeState = "012345012101234512212345012312345013412345014512345015";
        // cubeState = "000000000333333555555555222111111111222222444444444333";
         // cubeState = "000000000111111111222222222333333333444444444555555555";
+
         animCube.setCubeModel(cubeState);
         Log.d("CubeState",cubeState);
 
         shortestSolve = findShorterSolutions(scrambledCube);
 
 
-        btnSolve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSolve.setOnClickListener(v -> {
 
-                txtMoves.setText(shortestSolve);
-                txtMove1.setText("Solution Moves");
+            txtMoves.setText(shortestSolve);
+            txtMove1.setText("Solution Moves");
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animCube.setMoveSequence(shortestSolve);
-                        animCube.animateMoveSequence();
-                    }
-                }, 500);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    animCube.setMoveSequence(shortestSolve);
+                    animCube.animateMoveSequence();
+                }
+            }, 500);
 
 
-            }
         });
 
     }

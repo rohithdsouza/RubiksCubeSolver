@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.catalinjurjiu.animcubeandroid.AnimCube;
-import com.catalinjurjiu.rubikdetector.model.RubikFacelet;
 
 import min2phase.Search;
 
@@ -27,7 +26,7 @@ public class SolveCube extends AppCompatActivity {
     private static  String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
     private static  String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
 
-    String cubeString , solveSteps;
+    String cubeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,16 +115,14 @@ public class SolveCube extends AppCompatActivity {
     }
 
     public static String simpleSolve(String scrambledCube) {
-        String result = new Search().solution(scrambledCube, 21, 100000000, 0, 0);
-       return result;
+        return new Search().solution(scrambledCube, 21, 100000000, 0, 0);
         // R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'
     }
 
     public static String findShorterSolutions(String scrambledCube) {
         //Find shorter solutions (try more probes even a solution has already been found)
         //In this example, we try AT LEAST 10000 phase2 probes to find shorter solutions.
-        String result = new Search().solution(scrambledCube, 21, 100000000, 10000, 0);
-        return result;
+        return new Search().solution(scrambledCube, 21, 100000000, 10000, 0);
         // L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R'
     }
 }

@@ -50,14 +50,13 @@ public class Min2PhaseToCubeMapping {
     public static char[][] orientationMapping ( String numberSequence)
     {
         // mapping color to required orientation =
-        String sequence = numberSequence.toString();
         String moduloSequence[] = new String[6];
         char finalSequence[][] = new char[6][9];
 
         for ( int j =0 ; j< 6 ; j++)
         {
 
-            moduloSequence[j] = (String) sequence.subSequence(j*9,(j+1)*9);
+            moduloSequence[j] = (String) numberSequence.subSequence(j*9,(j+1)*9);
 
         }
 

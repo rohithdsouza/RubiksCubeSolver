@@ -1,10 +1,6 @@
 package com.sem6.mad.rubikscubesolver;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -19,17 +15,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.catalinjurjiu.rubikdetector.RubikDetector;
 import com.catalinjurjiu.rubikdetector.RubikDetectorUtils;
@@ -41,6 +32,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import info.hoang8f.widget.FButton;
 
@@ -113,70 +105,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
         super.onDestroy();
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        new MenuInflater(this).inflate(R.menu.menu_continuous_processing_activity, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.button_menu_change_resolution:
-//                showChangeResolutionDialog();
-//                break;
-//            case R.id.button_menu_draw_from_java:
-//                switchDrawingToJava();
-//                break;
-//            case R.id.button_menu_draw_from_cpp:
-//                switchDrawingToCpp();
-//                break;
-//            case R.id.button_menu_toggle_drawing:
-//                toggleDrawing();
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
-//    private void switchDrawingToJava() {
-//        String msg = processingThread.switchDrawingToJava();
-//        Toast.makeText(this.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
-//    }
-//
-//    private void switchDrawingToCpp() {
-//        String msg = processingThread.switchDrawingToCpp();
-//        Toast.makeText(this.getBaseContext(), msg, Toast.LENGTH_SHORT).show();
-//    }
-//
-//    private void toggleDrawing() {
-//        processingThread.toggleDrawing();
-//    }
-//
-//    private void showChangeResolutionDialog() {
-//        final List<Camera.Size> previewFormatSizes = processingThread.getValidCameraSizes();
-//        if (previewFormatSizes == null) {
-//            return;
-//        }
-//        AlertDialog alertDialog = new AlertDialog.Builder(this)
-//                .setTitle("Resolution picker")
-//                .setItems(availableSizesToStringArray(previewFormatSizes), new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        processingThread.updatePreviewSize(previewFormatSizes.get(i));
-//                    }
-//                })
-//                .setCancelable(true)
-//                .create();
-//        alertDialog.show();
-//    }
-//
-//    private String[] availableSizesToStringArray(List<Camera.Size> previewFormatSizes) {
-//        String[] result = new String[previewFormatSizes.size()];
-//        for (Camera.Size size : previewFormatSizes) {
-//            result[previewFormatSizes.indexOf(size)] = size.width + "x" + size.height;
-//        }
-//        return result;
-//    }
 }
 
 @SuppressWarnings("deprecation")
@@ -212,7 +141,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     public String faceletcol = "";
     public  String[] cubeFaceColor = new String[7];
     public int count = 0;
-    public Boolean last= false;
+
 
     ProcessingThread(String name, SurfaceHolder surfaceHolder) {
         super(name);
@@ -250,19 +179,6 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         backgroundHandler.sendEmptyMessage(START_CAMERA);
     }
 
-    List<Camera.Size> getValidCameraSizes() {
-        return validPreviewFormatSizes;
-    }
-
-    void updatePreviewSize(Camera.Size newPreviewSize) {
-        Log.w(TAG, "#updatePreviewSize");
-        Message msg = Message.obtain();
-        msg.what = UPDATE_PREVIEW_SIZE;
-        msg.arg1 = newPreviewSize.width;
-        msg.arg2 = newPreviewSize.height;
-        backgroundHandler.sendMessage(msg);
-    }
-
     void performCleanup() {
         Log.d(TAG, "before sync area.");
         synchronized (cleanupLock) {
@@ -279,47 +195,6 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                 Log.d(TAG, "cleanup finished!");
                 //do I have to do anything here?
             }
-        }
-    }
-
-    void toggleDrawing() {
-        drawing = !drawing;
-        if (drawing) {
-            if (drawingFromJava) {
-                switchDrawingToJava();
-            } else {
-                switchDrawingToCpp();
-            }
-        } else {
-            switchDrawingToJava();
-        }
-    }
-
-    String switchDrawingToJava() {
-        if (drawing) {
-            if (!drawingFromJava) {
-                drawingFromJava = true;
-                backgroundHandler.sendEmptyMessage(SWITCH_DRAWING_TO_JAVA);
-                return "Switched drawing to Java";
-            } else {
-                return "Already drawing from Java!";
-            }
-        } else {
-            return "Cannot draw from Java because drawing is toggled off!";
-        }
-    }
-
-    String switchDrawingToCpp() {
-        if (drawing) {
-            if (drawingFromJava) {
-                drawingFromJava = false;
-                backgroundHandler.sendEmptyMessage(SWITCH_DRAWING_TO_CPP);
-                return "Switched drawing to C++";
-            } else {
-                return "Already drawing from C++!";
-            }
-        } else {
-            return "Cannot draw from C++ because drawing is toggled off!";
         }
     }
 
@@ -501,46 +376,41 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                             .setTitle("Check Facelet Colors")
                             .setMessage(faceletcol)
                             .setInitialInput(faceletcol)
-                            .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                                @Override
-                                public void onTextInputConfirmed(String text) {
+                            .setConfirmButton(android.R.string.ok, text -> {
 
-//                                  count++;
+                           if (!Objects.equals(text, faceletcol))
+                                {
+                                    count++;
+                                    faceletcol = text;
+                                    cubeFaceColor[count-1] = faceletcol;
 
-                                    if ( text!= faceletcol)
-                                    {
-                                        count++;
-                                        faceletcol = text;
-                                        cubeFaceColor[count-1] = faceletcol;
-
-                                        Toast.makeText(view.getContext(),  "Passed Color " + count + " : " +faceletcol, Toast.LENGTH_SHORT).show();
-                                        Log.d("bro1", cubeFaceColor[count] );
-
-                                    }
-
-                                    else{
-                                        count++;
-                                        cubeFaceColor[count-1] = faceletcol;
-                                        Log.d("bro1", "in " + cubeFaceColor[count]);
-                                        Toast.makeText(view.getContext(), "Passed Color " + count +" : " +faceletcol, Toast.LENGTH_SHORT).show();
-
-                                        Log.d("bro1","in here");
-                                    }
-
-                                    if( count == 6 )
-                                    {
-                                        String cube = cubeFaceColor[0] + cubeFaceColor[1] + cubeFaceColor[2] +
-                                                cubeFaceColor[3] + cubeFaceColor[4] + cubeFaceColor[5];
-                                        Log.d("broskii", cube);
-                                        Intent intent = new Intent(view.getContext(),
-                                                SolveCube.class);
-                                        intent.putExtra("cubeString",cube);
-
-                                        view.getContext().startActivity(intent);
-                                    }
-
+                                    Toast.makeText(view.getContext(),  "Passed Color " + count + " : " +faceletcol, Toast.LENGTH_SHORT).show();
+                                    Log.d("bro1", cubeFaceColor[count] );
 
                                 }
+
+                                else{
+                                    count++;
+                                    cubeFaceColor[count-1] = faceletcol;
+                                    Log.d("bro1", "in " + cubeFaceColor[count]);
+                                    Toast.makeText(view.getContext(), "Passed Color " + count +" : " +faceletcol, Toast.LENGTH_SHORT).show();
+
+                                    Log.d("bro1","in here");
+                                }
+
+                                if( count == 6 )
+                                {
+                                    String cube = cubeFaceColor[0] + cubeFaceColor[1] + cubeFaceColor[2] +
+                                            cubeFaceColor[3] + cubeFaceColor[4] + cubeFaceColor[5];
+                                    Log.d("broskii", cube);
+                                    Intent intent = new Intent(view.getContext(),
+                                            SolveCube.class);
+                                    intent.putExtra("cubeString",cube);
+
+                                    view.getContext().startActivity(intent);
+                                }
+
+
                             })
                             .show();
 

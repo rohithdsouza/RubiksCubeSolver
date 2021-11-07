@@ -26,10 +26,6 @@
         </activity>
         <activity android:name=".DemoSolve" />
         <activity android:name=".SolveCube" />
-        <activity android:name=".CameraPreview"
-                  android:exported="true"  />
-        <activity android:name=".ScanCube"
-            android:exported="true"/>
         <activity android:name=".LiveDetectionActivity"
             android:screenOrientation="landscape" />
     </application>
