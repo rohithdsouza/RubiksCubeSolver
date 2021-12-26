@@ -3,29 +3,14 @@ package com.sem6.mad.rubikscubesolver;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
-
-    static {
-
-        if(OpenCVLoader.initDebug())
-        {
-            Log.d("MainActivity", "openCV Loaded");
-        }
-        else
-        {
-            Log.d("MainActivity", "openCV not loaded");
-        }
-
-    }
-
 
     CardView card1,card2;
     @Override

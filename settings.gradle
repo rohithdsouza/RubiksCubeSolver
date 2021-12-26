@@ -9,4 +9,3 @@ dependencyResolutionManagement {
 rootProject.name = "Rubiks Cube Solver"
 
 include ':app'
-include ':sdk'
