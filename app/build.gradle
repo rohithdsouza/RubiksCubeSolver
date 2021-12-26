@@ -9,8 +9,8 @@ android {
         applicationId "com.sem6.mad.rubikscubesolver"
         minSdk 24
         targetSdk 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.2"
         applicationId "sem6.mad.rubikscubesolver"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,7 +44,10 @@ dependencies {
     implementation 'com.catalinjurjiu:animcube-android:1.0.3'
     implementation 'com.catalinjurjiu:rubikdetector-android:1.0.0'
     implementation 'com.yarolegovich:lovely-dialog:1.1.1'
-    implementation 'info.hoang8f:fbutton:1.0.5'
+    implementation 'com.ornach.nobobutton:nobobutton:1.6'
+
+
+
 
 
     implementation project(path: ':sdk')

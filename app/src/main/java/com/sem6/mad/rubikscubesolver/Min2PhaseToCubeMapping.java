@@ -14,7 +14,7 @@ public class Min2PhaseToCubeMapping {
     public static String colorMapping (String initialSequence)
     {
         StringBuilder numberSequence = new StringBuilder(initialSequence);
-        char numSequence[][] = new char[6][9];
+        char[][] numSequence = new char[6][9];
         String finalSequence1;
 
         // first mapping to colors DUF.. to colors numeric
@@ -50,8 +50,8 @@ public class Min2PhaseToCubeMapping {
     public static char[][] orientationMapping ( String numberSequence)
     {
         // mapping color to required orientation =
-        String moduloSequence[] = new String[6];
-        char finalSequence[][] = new char[6][9];
+        String[] moduloSequence = new String[6];
+        char[][] finalSequence = new char[6][9];
 
         for ( int j =0 ; j< 6 ; j++)
         {

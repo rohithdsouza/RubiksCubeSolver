@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:id="@+id/rootView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,20 +20,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <info.hoang8f.widget.FButton
+
+    <com.ornach.nobobutton.NoboButton
         android:id="@+id/btn_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_margin="10dp"
         android:paddingLeft="20dp"
-        android:paddingTop="-5dp"
+        android:paddingTop="10dp"
         android:paddingRight="20dp"
-        android:text="CAPTURE"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        fbutton:cornerRadius="15dp"
-      />
+        android:layout_margin="15dp"
+        app:nb_text="CAPTURE"
+        app:nb_borderColor="#FFFFFF"
+        app:nb_borderWidth="2dp"
+        app:nb_backgroundColor="#EF3D56"
+        app:nb_focusColor="#B83CC3"
+        app:nb_textColor="#FFF"
+        app:nb_textSize="20sp"
+        app:nb_radius="5dp"
+        app:nb_fontIcon="&#xf030;"/>
 
 </FrameLayout>
 

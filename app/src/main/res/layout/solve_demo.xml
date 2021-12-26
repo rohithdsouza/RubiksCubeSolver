@@ -7,13 +7,6 @@
     android:background="@color/cardview_dark_background"
     tools:context=".DemoSolve">
 
-    <ImageView
-        android:id="@+id/root"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/dashbord_bacground"
-        />
 
     <com.catalinjurjiu.animcubeandroid.AnimCube
         android:id="@+id/animcube"
@@ -64,11 +57,13 @@
         app:layout_constraintVertical_bias="0.082" />
 
     <Button
+
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FF1744"
         android:backgroundTint="#FF1744"
+        android:ellipsize="none"
         android:padding="5sp"
         android:text="Solve"
         android:textSize="20sp"
@@ -79,7 +74,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.937" />
-    <!--        app:cubeColors="@array/custom_cube_colors" />-->
-    <!--optional if you want the back faces to be displayed-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

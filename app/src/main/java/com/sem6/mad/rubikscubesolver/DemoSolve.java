@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.catalinjurjiu.animcubeandroid.AnimCube;
+import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
 public class DemoSolve extends AppCompatActivity {
     AnimCube animCube;
@@ -34,6 +35,15 @@ public class DemoSolve extends AppCompatActivity {
         requestWindowFeature(1);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
+
+        // tutorial how to solve cube
+        new LovelyInfoDialog(this)
+                .setTopColorRes(R.color.teal_200)
+                .setNotShowAgainOptionEnabled(0)
+                .setNotShowAgainOptionChecked(false)
+                .setTitle(R.string.info_title)
+                .setMessage(R.string.info_message)
+                .show();
 
 
         setContentView(R.layout.solve_demo);
@@ -66,6 +76,7 @@ public class DemoSolve extends AppCompatActivity {
                 public void run() {
                     animCube.setMoveSequence(shortestSolve);
                     animCube.animateMoveSequence();
+
                 }
             }, 500);
 

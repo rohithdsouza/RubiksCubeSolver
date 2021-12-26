@@ -34,6 +34,8 @@ import com.catalinjurjiu.rubikdetector.RubikDetector;
 import com.catalinjurjiu.rubikdetector.RubikDetectorUtils;
 import com.catalinjurjiu.rubikdetector.config.DrawConfig;
 import com.catalinjurjiu.rubikdetector.model.RubikFacelet;
+import com.ornach.nobobutton.NoboButton;
+import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.io.IOException;
@@ -42,7 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import info.hoang8f.widget.FButton;
+
+
 
 public class LiveDetectionActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -54,7 +57,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
     private static final String TAG = LiveDetectionActivity.class.getSimpleName();
     private SurfaceHolder surfaceHolder;
     private ProcessingThread processingThread;
-    public static FButton btnCapture;
+    public static NoboButton btnCapture;
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -84,10 +87,20 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
         setTheme(R.style.Theme_ModernDashbord);
         setTitle(null);
 
-        btnCapture = (FButton) findViewById(R.id.btn_capture);
+        btnCapture =  findViewById(R.id.btn_capture);
 
         surfaceHolder = ((SurfaceView) findViewById(R.id.camera_surface_view)).getHolder();
         surfaceHolder.addCallback(this);
+
+        // tutorial how to solve cube
+        new LovelyInfoDialog(this)
+                .setTopColorRes(R.color.teal_200)
+                //This will add Don't show again checkbox to the dialog. You can pass any ID as argument
+                .setNotShowAgainOptionEnabled(0)
+                .setNotShowAgainOptionChecked(false)
+                .setTitle(R.string.info_title)
+                .setMessage(R.string.info_message)
+                .show();
 
     if (checkPermission()) {
         processingThread = new ProcessingThread("RubikProcessingThread", surfaceHolder);
@@ -101,12 +114,8 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
 
 
     private boolean checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted
-            return false;
-        }
-        return true;
+        // Permission is not granted
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
@@ -117,7 +126,7 @@ public class LiveDetectionActivity extends Activity implements SurfaceHolder.Cal
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -204,8 +213,8 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     private Bitmap drawingBitmap;
     private ByteBuffer drawingBuffer;
     private Paint paint;
-    private boolean drawing = true;
-    private boolean drawingFromJava = false;
+    private final boolean drawing = true;
+    private final boolean drawingFromJava = false;
     private SurfaceTexture surfaceTexture;
 
 
@@ -441,6 +450,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                 if ( count <= 6 && finalFacelets1 != null)
                 {
                     faceletcol =  getCubeColorString(finalFacelets1);
+
 
                     new LovelyTextInputDialog(view.getContext(), R.style.EditTextTintTheme)
                             .setTopColorRes(R.color.teal_200)

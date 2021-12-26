@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Rubiks Cube Solver</string>
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="info_title">How to Scan Cube</string>
+    <string name="info_message">1. Keep Cube in an orientation such that, \n
+    a) Green center piece is facing you \n
+    b) White center piece is above \n
+    c) Yellow center piece is below \n \n
+    2. Start Scanning the faces of the cube in the below order \n
+    (UP,RIGHT,FRONT,DOWN,LEFT,BACK) \n
+        1. White \n
+        2. Red \n
+        3. Green \n
+        4. Yellow\n
+        5. Orange \n
+        6. Blue\n \n
+    3. Verify the scanned colors, if any mistake simply modify the scanned string \n </string>
 </resources>
