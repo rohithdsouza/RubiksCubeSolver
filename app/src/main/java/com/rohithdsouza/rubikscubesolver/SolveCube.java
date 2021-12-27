@@ -12,12 +12,13 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.catalinjurjiu.animcubeandroid.AnimCube;
+import com.ornach.nobobutton.NoboButton;
 
 import min2phase.Search;
 
 public class SolveCube extends AppCompatActivity {
     AnimCube animCube;
-    Button btnSolve;
+    NoboButton btnSolve;
     TextView txtMoves;
     TextView txtState;
 

@@ -12,11 +12,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.catalinjurjiu.animcubeandroid.AnimCube;
+import com.ornach.nobobutton.NoboButton;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
 public class DemoSolve extends AppCompatActivity {
     AnimCube animCube;
-    Button btnSolve;
+    NoboButton btnSolve;
     TextView txtMoves;
     TextView txtStateLabel;
 

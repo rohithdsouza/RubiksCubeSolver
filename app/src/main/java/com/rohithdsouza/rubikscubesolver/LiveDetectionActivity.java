@@ -279,14 +279,14 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                                 faceletColor = text;
                                 cubeFaceColor[scannedCount - 1] = faceletColor;
 
-                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + " : " + faceletColor, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + "(" + scannedCount + ")" + " : " + faceletColor, Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, cubeFaceColor[scannedCount]);
 
                             } else {
                                 scannedCount++;
                                 cubeFaceColor[scannedCount - 1] = faceletColor;
                                 Log.d(TAG, "MODIFIED INPUT " + cubeFaceColor[scannedCount]);
-                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + " : " + faceletColor, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + "(" + scannedCount + ")" + " : " + faceletColor, Toast.LENGTH_SHORT).show();
                             }
                             //invoke solve activity
                             if (scannedCount == 6) {
