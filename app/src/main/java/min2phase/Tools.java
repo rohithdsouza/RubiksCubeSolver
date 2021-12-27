@@ -68,7 +68,7 @@ public class Tools {
      * @param in
      *     Where to read tables.
      *
-     * @see cs.min2phase.Tools#saveTo(DataOutput)
+     * @see min2phase.Tools#saveTo(DataOutput)
      */
     public static void initFrom(DataInput in) throws IOException {
         if (Search.inited && CoordCube.initLevel == 2) {
@@ -115,7 +115,7 @@ public class Tools {
      * @param out
      *     Where to cache tables.
      *
-     * @see cs.min2phase.Tools#initFrom(DataInput)
+     * @see min2phase.Tools#initFrom(DataInput)
      */
     public static void saveTo(DataOutput out) throws IOException {
         Search.init();
@@ -163,12 +163,12 @@ public class Tools {
     /**
      * Generates a random cube.<br>
      *
-     * The random source can be set by {@link cs.min2phase.Tools#setRandomSource(Random)}
+     * The random source can be set by {@link min2phase.Tools#setRandomSource(Random)}
      *
      * @return A random cube in the string representation. Each cube of the cube space has almost (depends on randomSource) the same probability.
      *
-     * @see cs.min2phase.Tools#setRandomSource(Random)
-     * @see cs.min2phase.Search#solution(String facelets, int maxDepth, long timeOut, long timeMin, int verbose)
+     * @see min2phase.Tools#setRandomSource(Random)
+     * @see min2phase.Search#solution(String facelets, int maxDepth, long timeOut, long timeMin, int verbose)
      */
     public static String randomCube() {
         return randomState(STATE_RANDOM, STATE_RANDOM, STATE_RANDOM, STATE_RANDOM, gen);
@@ -437,7 +437,7 @@ public class Tools {
     /**
      * Check whether the cube definition string s represents a solvable cube.
      *
-     * @param facelets is the cube definition string , see {@link cs.min2phase.Search#solution(String facelets, int maxDepth, long timeOut, long timeMin, int verbose)}
+     * @param facelets is the cube definition string , see {@link min2phase.Search#solution(String facelets, int maxDepth, long timeOut, long timeMin, int verbose)}
      * @return 0: Cube is solvable<br>
      *         -1: There is not exactly one facelet of each colour<br>
      *         -2: Not all 12 edges exist exactly once<br>

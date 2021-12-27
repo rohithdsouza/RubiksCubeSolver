@@ -1,11 +1,10 @@
-package com.sem6.mad.rubikscubesolver;
+package com.rohithdsouza.rubikscubesolver;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,11 +19,10 @@ public class SolveCube extends AppCompatActivity {
     AnimCube animCube;
     Button btnSolve;
     TextView txtMoves;
-    TextView txtMove1;
+    TextView txtState;
 
     private static  String scrambledCube = "" ;
-    private static final String simpleSolve = "R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'";
-    private static  String shortestSolve = "L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R' ";
+    private static  String shortestSolve = "";
 
     String cubeString;
 
@@ -36,57 +34,47 @@ public class SolveCube extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
-
-        setContentView(R.layout.solve_demo);
+        setContentView(R.layout.activity_solve);
 
         animCube = findViewById(R.id.animcube);
-        txtMoves = findViewById(R.id.textView2);
-        txtMove1 = findViewById(R.id.textview1);
+        txtMoves = findViewById(R.id.txt_moves);
+        txtState = findViewById(R.id.txt_initial_state);
         btnSolve = findViewById(R.id.button);
 
         Intent intent = getIntent();
 
+        //Obtain Scanned Cube
         if(intent != null){
           cubeString = intent.getStringExtra("cubeString");
             scrambledCube = getScrambledCube(cubeString);
-            Log.d("broy",scrambledCube);
+            Log.d("Solve Cube: Scrambledcube-",scrambledCube);
         }
 
         String cubeState = Min2PhaseToCubeMapping.colorMapping(scrambledCube);
         animCube.setCubeModel(cubeState);
-        Log.d("brok",cubeState);
+        Log.d("Solve Cube: cubeState-",cubeState);
 
         shortestSolve = findShorterSolutions(scrambledCube);
-        Log.d("broyzz", shortestSolve);
+        Log.d("Solve Cube: shortestSolve-", shortestSolve);
 
-        btnSolve.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnSolve.setOnClickListener(v -> {
+            txtMoves.setText(shortestSolve);
+            txtState.setText(R.string.solution_state);
 
-                txtMoves.setText(shortestSolve);
-                txtMove1.setText("Solution Moves");
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        animCube.setMoveSequence(shortestSolve);
-                        animCube.animateMoveSequence();
-
-                    }
-                }, 500);
-
-
-            }
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                animCube.setMoveSequence(shortestSolve);
+                animCube.animateMoveSequence();
+            }, 500);
         });
 
     }
 
+    // Map Scanned Cube (Color) to Color invariant (Min2Phase) eg: "RWR.." to "URU.."
     public String getScrambledCube(String cubeString)
     {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < cubeString.length(); i++) {
-
 
                 switch (cubeString.charAt(i)) {
                     case 'W':
@@ -107,23 +95,15 @@ public class SolveCube extends AppCompatActivity {
                     case 'Y':
                         stringBuilder.append("B");
                         break;
-
                 }
-
             }
-
         return stringBuilder.toString();
-    }
-
-    public static String simpleSolve(String scrambledCube) {
-        return new Search().solution(scrambledCube, 21, 100000000, 0, 0);
-        // R2 U2 B2 L2 F2 U' L2 R2 B2 R2 D  B2 F  L' F  U2 F' R' D' L2 R'
     }
 
     public static String findShorterSolutions(String scrambledCube) {
         //Find shorter solutions (try more probes even a solution has already been found)
         //In this example, we try AT LEAST 10000 phase2 probes to find shorter solutions.
         return new Search().solution(scrambledCube, 21, 100000000, 10000, 0);
-        // L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R'
+        //Eg: L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R'
     }
 }

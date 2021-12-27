@@ -1,4 +1,4 @@
-package com.sem6.mad.rubikscubesolver;
+package com.rohithdsouza.rubikscubesolver;
 
 /**
  * Takes i/p of Min2Phase Scrambled cube and Returns a string representing the colors
@@ -7,14 +7,12 @@ package com.sem6.mad.rubikscubesolver;
  * Eg: DUUBULDBFRBFRRULLLBRDFFFBLURDBFDFDRFRULBLUFDURRBLBDUDL
  *                          to
  *     132304100521115322323524120540531314405043012554354204
- *
- *     test- 000000000333333555555555222111111111222222444444444333
  */
 public class Min2PhaseToCubeMapping {
     public static String colorMapping (String initialSequence)
     {
         StringBuilder numberSequence = new StringBuilder(initialSequence);
-        char[][] numSequence = new char[6][9];
+        char[][] numSequence;
         String finalSequence1;
 
         // first mapping to colors DUF.. to colors numeric

@@ -16,14 +16,14 @@
         tools:layout_editor_absoluteY="30dp" />
 
     <TextView
-        android:id="@+id/textview1"
+        android:id="@+id/txt_initial_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FFD600"
         android:layout_marginTop="30dp"
         android:fontFamily="@font/lato_bold"
         android:gravity="center"
-        android:text="Initial State"
+        android:text="@string/initial_state"
         android:textAllCaps="true"
         android:textColor="@color/text_color_header"
         android:textSize="18sp"
@@ -35,7 +35,7 @@
         app:layout_constraintVertical_bias="0.022" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txt_moves"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -65,7 +65,7 @@
         android:backgroundTint="#FF1744"
         android:ellipsize="none"
         android:padding="5sp"
-        android:text="Solve"
+        android:text="@string/solve"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

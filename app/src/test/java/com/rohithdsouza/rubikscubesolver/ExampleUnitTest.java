@@ -1,4 +1,4 @@
-package com.sem6.mad.rubikscubesolver;
+package com.rohithdsouza.rubikscubesolver;
 
 import org.junit.Test;
 

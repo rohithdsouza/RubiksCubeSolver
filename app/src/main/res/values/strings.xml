@@ -15,4 +15,12 @@
         5. Orange \n
         6. Blue\n \n
     3. Verify the scanned colors, if any mistake simply modify the scanned string \n </string>
+    <string name="initial_state">Initial State</string>
+    <string name="solve">SOLVE</string>
+    <string name="solution_state">Solution Moves</string>
+    <string name="demo_solve">Demo Solve</string>
+    <string name="rubik_s_cube_solver">Rubik\'s Cube Solver</string>
+    <string name="main_description">Scan and solve any rubik\'s cube combination</string>
+    <string name="card1">Scan Cube</string>
+
 </resources>

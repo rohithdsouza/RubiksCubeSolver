@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rootView"
@@ -8,12 +10,22 @@
     android:background="@color/background_color"
     tools:context=".MainActivity">
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
     <ImageView
         android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="600dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/dashbord_bacground" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/dashboard_background"
+        android:contentDescription="Background image for main Activity" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -31,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/lato_bold"
-            android:text="Rubik's Cube Solver"
+            android:text="@string/rubik_s_cube_solver"
             android:textColor="@color/text_color_header"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -41,10 +53,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/lato_bold"
-            android:text="Scan and solve any rubik's cube combination"
+            android:text="@string/main_description"
             android:textColor="@color/text_color_description"
             android:textSize="20sp" />
     </LinearLayout>
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,13 +110,14 @@
 
                         android:padding="25dp"
                         android:src="@drawable/barcode_scanner"
-                        app:tint="#fff" />
+                        app:tint="#fff"
+                        android:contentDescription="Scan Icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_black"
-                        android:text="Scan Cube"
+                        android:text="@string/card1"
                         android:textColor="#257FC5"
                         android:textSize="22sp" />
                 </LinearLayout>
@@ -144,13 +160,14 @@
                         android:background="@drawable/shopping_ing_background"
                         android:padding="25dp"
                         android:src="@drawable/game_cube"
-                        app:tint="#fff" />
+                        app:tint="#fff"
+                        android:contentDescription="Solve Cube Icon" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/lato_black"
-                        android:text="Demo Solve"
+                        android:text="@string/demo_solve"
                         android:textColor="#D84DCA"
                         android:textSize="22sp" />
                 </LinearLayout>
@@ -161,6 +178,6 @@
 
     </LinearLayout>
 
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    tools:context="com.sem6.mad.rubikscubesolver.LiveDetectionActivity">
+    tools:context="com.rohithdsouza.rubikscubesolver.LiveDetectionActivity">
 
 <FrameLayout
     android:layout_width="match_parent"
@@ -39,6 +39,8 @@
         app:nb_textSize="20sp"
         app:nb_radius="5dp"
         app:nb_fontIcon="&#xf030;"/>
+
+
 
 </FrameLayout>
 
