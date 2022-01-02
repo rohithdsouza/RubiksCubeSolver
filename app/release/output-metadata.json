@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "sem6.mad.rubikscubesolver",
+  "applicationId": "rohithdsouza.rubikscubesolver.release",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 2,
-      "versionName": "1.2",
+      "versionCode": 4,
+      "versionName": "1.4",
       "outputFile": "app-release.apk"
     }
   ],

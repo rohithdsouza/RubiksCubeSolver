@@ -1,5 +1,6 @@
 package com.rohithdsouza.rubikscubesolver;
 
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,27 +40,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+
 public class LiveDetectionActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     public static final int DEFAULT_PREVIEW_WIDTH = 1920;
     public static final int DEFAULT_PREVIEW_HEIGHT = 1080;
     public static final int DEFAULT_IMAGE_FORMAT = ImageFormat.NV21;
 
+
     private static final String TAG = LiveDetectionActivity.class.getSimpleName();
     private SurfaceHolder surfaceHolder;
     private ProcessingThread processingThread;
     public static NoboButton btnCapture;
 
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.w(TAG, "surfaceCreated");
+         Log.w(TAG, "surfaceCreated");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         Log.d(TAG, "surfaceChanged");
+        //TODO of course, the logic here would need to be more complex we would know that the surface size can change
+        //TODO however, strictly in this case, this does not happen. so we're safe with initializing the camera & rendering here
         processingThread.openCamera();
         processingThread.startCamera();
+
     }
 
     @Override
@@ -74,12 +82,12 @@ public class LiveDetectionActivity extends AppCompatActivity implements SurfaceH
         setTheme(R.style.Theme_ModernDashbord);
         setTitle(null);
 
-        btnCapture =  findViewById(R.id.btn_capture);
+        btnCapture = findViewById(R.id.btn_capture);
 
         surfaceHolder = ((SurfaceView) findViewById(R.id.camera_surface_view)).getHolder();
         surfaceHolder.addCallback(this);
 
-     // Tutorial Dialog on how to solve cube
+        // tutorial how to solve cube
         new LovelyInfoDialog(this)
                 .setTopColorRes(R.color.teal_200)
                 .setNotShowAgainOptionEnabled(0)
@@ -88,16 +96,16 @@ public class LiveDetectionActivity extends AppCompatActivity implements SurfaceH
                 .setMessage(R.string.info_message)
                 .show();
 
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
         processingThread = new ProcessingThread("RubikProcessingThread", surfaceHolder);
         processingThread.start();
     }
 
         else {
-        Toast.makeText(getApplicationContext(), "You Need to Allow Camera Permission", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "You need to allow camera permission", Toast.LENGTH_SHORT).show();
         }
-
     }
+
 
     @Override
     protected void onDestroy() {
@@ -125,7 +133,7 @@ public class LiveDetectionActivity extends AppCompatActivity implements SurfaceH
 @SuppressWarnings("deprecation")
 final class ProcessingThread extends HandlerThread implements Camera.PreviewCallback {
 
-    private static final String TAG = ProcessingThread.class.getSimpleName();
+    private static final String TAG = "ProcessingThread";
     private static final int OPEN_CAMERA = 0;
     private static final int START_CAMERA = 1;
     private static final int PERFORM_CLEANUP = 2;
@@ -133,7 +141,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     private static final int SWITCH_DRAWING_TO_CPP = 4;
     private static final int SWITCH_DRAWING_TO_JAVA = 5;
     private static final int REDUNDANT_TEXTURE_ID = 13242;
-    private static final boolean IS_DEBUGGABLE = false;
+    private static final boolean IS_DEBUGGABLE = true;
 
     private final Object cleanupLock = new Object();
     private final SurfaceHolder surfaceHolder;
@@ -147,20 +155,22 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     private Bitmap drawingBitmap;
     private ByteBuffer drawingBuffer;
     private Paint paint;
-
     private final boolean drawing = true;
     private final boolean drawingFromJava = false;
     private SurfaceTexture surfaceTexture;
 
-    public String faceletColor = "";
-    public String[] cubeFaceColor = new String[7];
-    public int scannedCount = 0;
+
+    public String faceletcol = "";
+    public  String[] cubeFaceColor = new String[7];
+    public int count = 0;
     public static final String[] scanColorOrder =  {"White","Red","Green","Yellow","Orange","Blue"};
+
 
     ProcessingThread(String name, SurfaceHolder surfaceHolder) {
         super(name);
         this.surfaceHolder = surfaceHolder;
-        Arrays.fill(cubeFaceColor, "");
+        Arrays.fill(cubeFaceColor,"");
+
     }
 
     @Override
@@ -169,6 +179,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         if (data == null) {
             Log.w(TAG, "Received null data array, or a data array of wrong size, from camera. Do nothing.");
             return;
+
         }
 
         if (data.length != currentConfigPreviewFrameByteCount) {
@@ -180,7 +191,8 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         if (rubikDetector.isActive()) {
             renderFrameInternal(data);
         }
-
+        camera.addCallbackBuffer(data);
+        camera.addCallbackBuffer(data);
         camera.addCallbackBuffer(data);
     }
 
@@ -195,7 +207,7 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     void performCleanup() {
         Log.d(TAG, "before sync area.");
         synchronized (cleanupLock) {
-            Log.d(TAG, "sending PERFORM_CLEANUP to background handler, in sync area.");
+            Log.d(TAG, "sending PERFORM_CLEANUP to background hander, in sync area.");
             backgroundHandler.sendEmptyMessage(PERFORM_CLEANUP);
             Log.d(TAG, "called stop, starting to wait.");
             try {
@@ -214,7 +226,6 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
     @Override
     protected void onLooperPrepared() {
         super.onLooperPrepared();
-
         this.backgroundHandler = new Handler(ProcessingThread.this.getLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -245,116 +256,6 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         };
     }
 
-    /////////////////////////// Render Frame on preview ////////////////////////////////
-
-    private void renderFrameInternal(byte[] data) {
-
-        Canvas canvas = surfaceHolder.lockCanvas();
-        if (canvas == null) {
-            return;
-        }
-
-        Rect srcRect = new Rect(0, 0, previewSize.width, previewSize.height);
-
-        ///////////////////////Adding button capture here//////////////////////////////
-
-        RubikFacelet[][] facelets = rubikDetector.findCube(data);
-        RubikFacelet[][] finalFacelets1 = facelets;
-
-        LiveDetectionActivity.btnCapture.setOnClickListener(view -> {
-
-            //Check if Scanned Facelet can be accepted or not
-            if (scannedCount <= 6 && finalFacelets1 != null) {
-                faceletColor = getCubeColorString(finalFacelets1);
-
-                //Modify Scanned Color String DialogBox
-                new LovelyTextInputDialog(view.getContext(), R.style.EditTextTintTheme)
-                        .setTopColorRes(R.color.teal_200)
-                        .setTitle("Check Facelet Colors")
-                        .setMessage(faceletColor)
-                        .setInitialInput(faceletColor)
-                        .setConfirmButton(android.R.string.ok, text -> {
-                            if (!Objects.equals(text, faceletColor)) {
-                                scannedCount++;
-                                faceletColor = text;
-                                cubeFaceColor[scannedCount - 1] = faceletColor;
-
-                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + "(" + scannedCount + ")" + " : " + faceletColor, Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, cubeFaceColor[scannedCount]);
-
-                            } else {
-                                scannedCount++;
-                                cubeFaceColor[scannedCount - 1] = faceletColor;
-                                Log.d(TAG, "MODIFIED INPUT " + cubeFaceColor[scannedCount]);
-                                Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[scannedCount-1] + "(" + scannedCount + ")" + " : " + faceletColor, Toast.LENGTH_SHORT).show();
-                            }
-                            //invoke solve activity
-                            if (scannedCount == 6) {
-                                String cube = cubeFaceColor[0] + cubeFaceColor[1] + cubeFaceColor[2] +
-                                        cubeFaceColor[3] + cubeFaceColor[4] + cubeFaceColor[5];
-                                Log.d("The Scanned Cube", cube);
-                                Intent intent = new Intent(view.getContext(),
-                                        SolveCube.class);
-                                intent.putExtra("cubeString", cube);
-                                view.getContext().startActivity(intent);
-                            }
-                        })
-                        .show();
-
-            }
-        });
-
-        drawingBuffer.rewind();
-        drawingBuffer.put(data, rubikDetector.getResultFrameBufferOffset(), rubikDetector.getResultFrameByteCount());
-        drawingBuffer.rewind();
-        Log.d(TAG, "drawingBuffer capacity: " + drawingBuffer.capacity() + " buffer is direct: " + drawingBuffer.isDirect() + " remaining:" + drawingBuffer.remaining());
-        drawingBitmap.copyPixelsFromBuffer(drawingBuffer);
-
-        try {
-            canvas.drawBitmap(drawingBitmap, srcRect, surfaceHolder.getSurfaceFrame(), null);
-            if (facelets != null && drawing && drawingFromJava) {
-                facelets = RubikDetectorUtils.rescaleResults(facelets,
-                        rubikDetector.getFrameWidth(),
-                        rubikDetector.getFrameHeight(),
-                        surfaceHolder.getSurfaceFrame().width(),
-                        surfaceHolder.getSurfaceFrame().height());
-                Log.d(TAG, "drawing facelets!");
-
-                RubikDetectorUtils.drawFaceletsAsRectangles(facelets, canvas, paint);
-
-            } else {
-                Log.d(TAG, "facelets are null!");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Exception while rendering", e);
-        } finally {
-            surfaceHolder.unlockCanvasAndPost(canvas);
-        }
-    }
-
-    private void allocateAndSetBuffers() {
-        drawingBuffer = ByteBuffer.allocate(rubikDetector.getResultFrameByteCount());
-        drawingBitmap = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
-
-        byte[] dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
-        currentConfigPreviewFrameByteCount = dataBuffer.length;
-        camera.addCallbackBuffer(dataBuffer);
-        Log.w(TAG, "Allocated buffer1:" + dataBuffer + " size:" + dataBuffer.length);
-
-        dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
-        camera.addCallbackBuffer(dataBuffer);
-        Log.w(TAG, "Allocated buffer2:" + dataBuffer + " size:" + dataBuffer.length);
-
-        dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
-        camera.addCallbackBuffer(dataBuffer);
-        Log.w(TAG, "Allocated buffer3:" + dataBuffer + " size:" + dataBuffer.length);
-        camera.setPreviewCallbackWithBuffer(this);
-    }
-
-
-
-    ///////////////////////////// Camera Background Handler Functions ////////////////////////////////
-
     private void openCameraInternal() {
         int cameraId = -1;
         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
@@ -370,20 +271,21 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
             return;
         }
         camera = Camera.open(cameraId);
-        // camera.setDisplayOrientation(90);
+       // camera.setDisplayOrientation(90);
         Camera.Parameters cameraParameters = camera.getParameters();
-        cameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        cameraParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
         validPreviewFormatSizes = cameraParameters.getSupportedPreviewSizes();
-        previewSize = findHighResValidPreviewSize(camera);
-
+      //  previewSize = findHighResValidPreviewSize(camera);
+        previewSize = getOptimalPreviewSize(validPreviewFormatSizes,LiveDetectionActivity.DEFAULT_PREVIEW_WIDTH,LiveDetectionActivity.DEFAULT_PREVIEW_HEIGHT);
         cameraParameters.setPreviewSize(previewSize.width, previewSize.height);
-        Log.d(TAG, "OPEN CAMERA INTERNAL" + previewSize.width + " h: " + previewSize.height);
+        Log.d(TAG,"width:" + previewSize.width + " height: "+ previewSize.height);
         cameraParameters.setPreviewFormat(LiveDetectionActivity.DEFAULT_IMAGE_FORMAT);
 
         camera.setParameters(cameraParameters);
 
         try {
             surfaceTexture = new SurfaceTexture(REDUNDANT_TEXTURE_ID);
+         //   camera.setDisplayOrientation(90);
             camera.setPreviewTexture(surfaceTexture);
         } catch (IOException e) {
             Log.w(TAG, "error creating the texture", e);
@@ -396,6 +298,39 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                 .inputFrameFormat(RubikDetectorUtils.convertAndroidImageFormat(LiveDetectionActivity.DEFAULT_IMAGE_FORMAT))
                 .build();
         allocateAndSetBuffers();
+    }
+
+
+    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+        final double ASPECT_TOLERANCE = 0.1;
+        double targetRatio=(double)h / w;
+
+        if (sizes == null) return null;
+
+        Camera.Size optimalSize = null;
+        double minDiff = Double.MAX_VALUE;
+
+        int targetHeight = h;
+
+        for (Camera.Size size : sizes) {
+            double ratio = (double) size.width / size.height;
+            if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE) continue;
+            if (Math.abs(size.height - targetHeight) < minDiff) {
+                optimalSize = size;
+                minDiff = Math.abs(size.height - targetHeight);
+            }
+        }
+
+        if (optimalSize == null) {
+            minDiff = Double.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - targetHeight) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - targetHeight);
+                }
+            }
+        }
+        return optimalSize;
     }
 
     private void startCameraInternal() {
@@ -464,7 +399,103 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         oldRubikDetector.releaseResources();
     }
 
-    ///////////////////////////////// Other methods (utils) ////////////////////////////////////////////
+    /////////////////////////// THE FUNCTION ////////////////////////////////
+
+    private void renderFrameInternal(byte[] data) {
+
+        Log.w(TAG, "renderFrameInternal");
+
+        Canvas canvas = surfaceHolder.lockCanvas();
+        if (canvas == null) {
+            return;
+        }
+
+        Rect srcRect = new Rect(0, 0, previewSize.width, previewSize.height);
+
+        ///////////////////////Adding button capture here//////////////////////////////
+
+        RubikFacelet[][] facelets = rubikDetector.findCube(data);
+        RubikFacelet[][] finalFacelets1 = facelets;
+
+        LiveDetectionActivity.btnCapture.setOnClickListener(new View.OnClickListener() {
+            @Override
+
+            public void onClick(View view) {
+
+                //accept facelet
+                if ( count <= 6 && finalFacelets1 != null)
+                {
+                    faceletcol =  getCubeColorString(finalFacelets1);
+
+
+                    new LovelyTextInputDialog(view.getContext(), R.style.EditTextTintTheme)
+                            .setTopColorRes(R.color.teal_200)
+                            .setTitle("Check Facelet Colors")
+                            .setMessage(faceletcol)
+                            .setInitialInput(faceletcol)
+                            .setConfirmButton(android.R.string.ok, text -> {
+
+                           if (!Objects.equals(text, faceletcol))
+                                {
+                                    count++;
+                                    faceletcol = text;
+                                    cubeFaceColor[count-1] = faceletcol;
+                                    Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[count-1] + "(" + count + ")" + " : " + faceletcol, Toast.LENGTH_SHORT).show();
+                                }
+
+                                else{
+                                    count++;
+                                    cubeFaceColor[count-1] = faceletcol;
+                               Toast.makeText(view.getContext(), "Passed Color " + scanColorOrder[count-1] + "(" + count + ")" + " : " + faceletcol, Toast.LENGTH_SHORT).show();
+                                }
+
+                                if( count == 6 )
+                                {
+                                    String cube = cubeFaceColor[0] + cubeFaceColor[1] + cubeFaceColor[2] +
+                                            cubeFaceColor[3] + cubeFaceColor[4] + cubeFaceColor[5];
+                                    Intent intent = new Intent(view.getContext(),
+                                            SolveCube.class);
+                                    intent.putExtra("cubeString",cube);
+
+                                    view.getContext().startActivity(intent);
+                                }
+
+
+                            })
+                            .show();
+
+                }
+            }
+        });
+
+
+        drawingBuffer.rewind();
+        drawingBuffer.put(data, rubikDetector.getResultFrameBufferOffset(), rubikDetector.getResultFrameByteCount());
+        drawingBuffer.rewind();
+        Log.d(TAG, "drawingBuffer capacity: " + drawingBuffer.capacity() + " buffer is direct: " + drawingBuffer.isDirect() + " remaining:" + drawingBuffer.remaining());
+        drawingBitmap.copyPixelsFromBuffer(drawingBuffer);
+
+        try {
+            canvas.drawBitmap(drawingBitmap, srcRect, surfaceHolder.getSurfaceFrame(), null);
+            if (facelets != null && drawing && drawingFromJava) {
+                facelets = RubikDetectorUtils.rescaleResults(facelets,
+                        rubikDetector.getFrameWidth(),
+                        rubikDetector.getFrameHeight(),
+                        surfaceHolder.getSurfaceFrame().width(),
+                        surfaceHolder.getSurfaceFrame().height());
+                Log.d(TAG, "drawing facelets!");
+
+                RubikDetectorUtils.drawFaceletsAsRectangles(facelets, canvas, paint);
+
+            } else {
+                Log.d(TAG, "facelets are null!");
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Exception while rendering", e);
+        } finally {
+            surfaceHolder.unlockCanvasAndPost(canvas);
+        }
+    }
 
     public static String getCubeColorString(@NonNull RubikFacelet[][] result) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -492,24 +523,32 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
                         break;
 
                 }
+
             }
         }
         return stringBuilder.toString();
     }
 
-    private Camera.Size findHighResValidPreviewSize(final Camera camera) {
-        int minWidthDiff = 100000;
-        Camera.Size desiredWidth = camera.new Size(LiveDetectionActivity.DEFAULT_PREVIEW_WIDTH, LiveDetectionActivity.DEFAULT_PREVIEW_HEIGHT);
-        for (Camera.Size size : validPreviewFormatSizes) {
-            int diff = LiveDetectionActivity.DEFAULT_PREVIEW_WIDTH - size.width;
+    private void allocateAndSetBuffers() {
+        drawingBuffer = ByteBuffer.allocate(rubikDetector.getResultFrameByteCount());
+        drawingBitmap = Bitmap.createBitmap(previewSize.width, previewSize.height, Bitmap.Config.ARGB_8888);
 
-            if (Math.abs(diff) < minWidthDiff) {
-                minWidthDiff = Math.abs(diff);
-                desiredWidth = size;
-            }
-        }
-        return desiredWidth;
+        byte[] dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
+        currentConfigPreviewFrameByteCount = dataBuffer.length;
+        camera.addCallbackBuffer(dataBuffer);
+        Log.w(TAG, "Allocated buffer1:" + dataBuffer + " size:" + dataBuffer.length);
+
+        dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
+        camera.addCallbackBuffer(dataBuffer);
+        Log.w(TAG, "Allocated buffer2:" + dataBuffer + " size:" + dataBuffer.length);
+
+        dataBuffer = ByteBuffer.allocateDirect(rubikDetector.getRequiredMemory()).array();
+        camera.addCallbackBuffer(dataBuffer);
+        Log.w(TAG, "Allocated buffer3:" + dataBuffer + " size:" + dataBuffer.length);
+        camera.setPreviewCallbackWithBuffer(this);
     }
+
+
 
     private void initializePaint() {
         paint = new Paint();
@@ -518,6 +557,5 @@ final class ProcessingThread extends HandlerThread implements Camera.PreviewCall
         paint.setStrokeWidth(10);
         paint.setColor(Color.DKGRAY);
     }
-
 }
 

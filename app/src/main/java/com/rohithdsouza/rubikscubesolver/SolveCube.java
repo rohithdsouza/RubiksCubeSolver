@@ -21,9 +21,12 @@ public class SolveCube extends AppCompatActivity {
     NoboButton btnSolve;
     TextView txtMoves;
     TextView txtState;
+    TextView txtNoOfMoves1;
+    TextView txtNoOfMoves2;
 
     private static  String scrambledCube = "" ;
     private static  String shortestSolve = "";
+    private static  String noOfMoves = "";
 
     String cubeString;
 
@@ -41,6 +44,8 @@ public class SolveCube extends AppCompatActivity {
         txtMoves = findViewById(R.id.txt_moves);
         txtState = findViewById(R.id.txt_initial_state);
         btnSolve = findViewById(R.id.button);
+        txtNoOfMoves1 = findViewById(R.id.txt_No_of_moves);
+        txtNoOfMoves2 = findViewById(R.id.txt_No_of_moves2);
 
         Intent intent = getIntent();
 
@@ -58,9 +63,21 @@ public class SolveCube extends AppCompatActivity {
         shortestSolve = findShorterSolutions(scrambledCube);
         Log.d("Solve Cube: shortestSolve-", shortestSolve);
 
+        noOfMoves = "" + numberOfMoves(shortestSolve);
+
         btnSolve.setOnClickListener(v -> {
             txtMoves.setText(shortestSolve);
             txtState.setText(R.string.solution_state);
+
+            if (shortestSolve.charAt(0) == 'E') {
+                txtNoOfMoves1.setText("You have not Scanned the cube properly, please scan the cube again");
+            }
+
+            else {
+                txtNoOfMoves1.setText("Number of Moves :");
+                txtNoOfMoves2.setText(noOfMoves);
+            }
+
 
             Handler handler = new Handler();
             handler.postDelayed(() -> {
@@ -69,6 +86,13 @@ public class SolveCube extends AppCompatActivity {
             }, 500);
         });
 
+    }
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        startActivity(new Intent(SolveCube.this, MainActivity.class));
+        finish();
     }
 
     // Map Scanned Cube (Color) to Color invariant (Min2Phase) eg: "RWR.." to "URU.."
@@ -107,4 +131,24 @@ public class SolveCube extends AppCompatActivity {
         return new Search().solution(scrambledCube, 21, 100000000, 10000, 0);
         //Eg: L2 U  D2 R' B  U2 L  F  U  R2 D2 F2 U' L2 U  B  D  R'
     }
+
+    public static int numberOfMoves(String moves ) {
+        int count = 0;
+        // StringBuilder moves = new StringBuilder(movesX);
+        if (moves.charAt(0) == 'E')
+            return count;
+        else {
+            for (int i = 0; i < moves.length() - 1; i++) {
+                if(i ==0 && moves.charAt(0)==' ')
+                    continue;
+                if (moves.charAt(i) == ' ' && moves.charAt(i + 1) != ' ')
+                    count++;
+            }
+
+            return count + 1;
+        }
+    }
+
+
+
 }

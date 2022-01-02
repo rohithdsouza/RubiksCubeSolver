@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         cameraPermissionCheck();
+        Log.d("Main","in this");
     }
 
     ////////////////////////////////// FUNCTIONS /////////////////////////////////////
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                                 != PackageManager.PERMISSION_GRANTED)
                         {
-                            showMessageOKCancel("The app requires camera permission to Scan Cube, Please allow Camera access by clicking 'Allow",
+                            showMessageOKCancel("The app requires camera permission to Scan Cube, Please allow Camera access by clicking Allow",
                                     (dialog, which) -> requestPermission());
                         }
                     }
